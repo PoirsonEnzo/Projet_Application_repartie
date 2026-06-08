@@ -6,7 +6,7 @@ public class LancerNoeud {
 
     public static void main(String[] args) {
         if (args.length < 2) {
-            System.out.println("Usage: java LancerNoeud <adresse_serveur> <nom_service_central>");
+            System.out.println("Nop");
                 return;
         }
         try{
