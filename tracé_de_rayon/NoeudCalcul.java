@@ -1,7 +1,6 @@
-import raytracer.Disp;
-import raytracer.Scene;
-import raytracer.Image;
 import java.rmi.RemoteException;
+import raytracer.Image;
+import raytracer.Scene;
 
 public class NoeudCalcul implements ServiceNoeud {
 

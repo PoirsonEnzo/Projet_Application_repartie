@@ -11,7 +11,7 @@ public class LancerNoeud {
         }
         try{
             Registry annuaire = LocateRegistry.getRegistry(args[0],1099);
-            ServiceCentral central = (ServiceCentral) annuaire.lookup(args[1]);
+            ServiceDistributeurNoeud central = (ServiceDistributeurNoeud) annuaire.lookup(args[1]);
             NoeudCalcul noeud = new NoeudCalcul();
             ServiceNoeud servNoeud = (ServiceNoeud) UnicastRemoteObject.exportObject(noeud, 0);
             central.inscriptionNoeud(servNoeud);

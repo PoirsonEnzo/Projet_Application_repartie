@@ -1,6 +1,9 @@
 import java.lang.Thread;
+import java.rmi.RemoteException;
 import raytracer.Disp;
 import raytracer.Scene;
+import raytracer.Image;
+
 
 public class ThreadDessin extends Thread {
 
@@ -22,7 +25,12 @@ public class ThreadDessin extends Thread {
 
     @Override
     public void run(){
-        Image image = noeud.compute(scene,x,y,l,h);
+        Image image;
+        try {
+            image = noeud.compute(scene,x,y,l,h);
+        } catch (RemoteException ex) {
+            System.getLogger(ThreadDessin.class.getName()).log(System.Logger.Level.ERROR, (String) null, ex);
+        }
         synchronized(fenetre){
             fenetre.setImage(image,x,y);
         }
