@@ -3,5 +3,5 @@ import java.rmi.RemoteException;
 
 public interface ServiceNoeud extends Remote {
 
-    void compute(/*Type de l'objet a calculer*/) throws RemoteException;
+    void compute(Disp fenetre, Scene scene, int x, int y, int l, int h) throws RemoteException;
 }

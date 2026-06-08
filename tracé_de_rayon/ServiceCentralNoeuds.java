@@ -10,7 +10,7 @@ public class ServiceCentralNoeuds implements ServiceCentral {
     }
 
     List<ServiceNoeud> requeteNoeuds() throws RemoteException{
-        
+
     }
 
 }
