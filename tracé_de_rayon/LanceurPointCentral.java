@@ -7,7 +7,7 @@ public class LanceurPointCentral {
         PointCentral pc = new PointCentral();
         ServiceDistributeurNoeud service = (ServiceDistributeurNoeud) UnicastRemoteObject.exportObject(pc, 0);
         Registry reg = LocateRegistry.createRegistry(1099);
-        reg.rebind("distributeur", service);
+        reg.rebind("servicecentralenoeuds", service);
         System.out.println("Point central démarré");
     }
 }

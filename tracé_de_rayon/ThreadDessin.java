@@ -29,17 +29,36 @@ public class ThreadDessin extends Thread {
     public void run(){
         Image image = null;
         try {
+            // Lancement normal
             image = noeud.compute(scene,x,y,l,h);
         } catch (RemoteException ex) {
+            
+            // Erreur coté noeud
             try {
+
+                // Suppression du noeud de la liste des noeuds dispo
                 service.suppressionNoeud(noeud);
-            } catch (Exception e){}
+
+                // Nouveau noeud
+                ServiceNoeud nouvNoeud = service.getNoeud();
+
+                // Lancement d'un nouveau noeud
+                Thread nouvThread = new ThreadDessin(service,fenetre,nouvNoeud,scene,x,y,l,h);
+                nouvThread.start();
+
+                // Interruption du thread actuel pour laisser le thread fils afficher l'image
+                return;
+            } catch (RemoteException e){
+                System.out.println("Erreur : Déconnecté du point central");
+            }
         }
         synchronized(fenetre){
             fenetre.setImage(image,x,y);
         }
         try {
             service.libererNoeud(noeud);
-        } catch (Exception e ){}
+        } catch (RemoteException e ){
+            System.out.println("Erreur : Déconnecté du point central");
+        }
     }
 }

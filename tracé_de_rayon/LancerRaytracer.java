@@ -20,7 +20,7 @@ public class LancerRaytracer {
 
         
         if(args.length > 0){
-            fichier_description = args[0];
+            //fichier_description = args[0];
             if(args.length > 1){
                 largeur = Integer.parseInt(args[1]);
                 if(args.length > 2)
@@ -49,19 +49,21 @@ public class LancerRaytracer {
         Instant debut = Instant.now();
         System.out.println("Calcul de l'image :\n - Coordonnées : "+x0+","+y0
                            +"\n - Taille "+ largeur + "x" + hauteur);
-        /* 
-        Image image = scene.compute(x0, y0, l/2, h/2);
-        Image image2 = scene.compute(x0+l/2, y0+h/2,l-l/2,h-h/2);
-        Image image3 = scene.compute(x0+l/2, y0,l-l/2,h);
-        Image image4 = scene.compute(x0, y0+h/2,l,h-h/2);
-        
-        */
+     
        try {
-            Registry annuaire = LocateRegistry.getRegistry(args[0],1099);
-            PointCentral central = (PointCentral) annuaire.lookup("distributeur");
-    // Définition de la grille de découpage (3x3 = 9 blocs)
-            int nbColonnes = 3; 
-            int nbLignes = 3;
+            Registry annuaire = LocateRegistry.getRegistry("localhost",1099);
+            ServiceDistributeurNoeud central = (ServiceDistributeurNoeud) annuaire.lookup("servicecentralenoeuds");
+            
+            // Nbr de colonnes (Proche de la racine du nombre pour faire un carré)
+            int nbColonnes = (int) Math.ceil(Math.sqrt(Integer.parseInt(args[0])));
+            if (nbColonnes == 0){
+                nbColonnes = 1;
+            } 
+            int nbLignes = (int) Math.ceil(Integer.parseInt(args[0]) / nbColonnes);
+            if (nbLignes == 0){
+                nbLignes = 1;
+            }
+            System.out.println("LIGNES : " + nbLignes + "\nCOLONNES : " + nbColonnes);
             
             int largeurBloc = l / nbColonnes;
             int hauteurBloc = h / nbLignes;
@@ -73,9 +75,7 @@ public class LancerRaytracer {
                     // Calcul des coordonnées de départ pour le bloc courant
                     int departX = x0 + (colonne * largeurBloc);
                     int departY = y0 + (ligne * hauteurBloc);
-                    
-                    // Ajustement pour le dernier bloc de la ligne/colonne au cas où 
-                    // la largeur/hauteur ne serait pas un multiple parfait de 3
+
                     int wCourant = (colonne == nbColonnes - 1) ? (l - departX) : largeurBloc;
                     int hCourant = (ligne == nbLignes - 1) ? (h - departY) : hauteurBloc;
                     
@@ -84,6 +84,7 @@ public class LancerRaytracer {
                     // On passe les bonnes coordonnées et tailles au thread
                     ThreadDessin t = new ThreadDessin(central, disp, noeud, scene, departX, departY, wCourant, hCourant);
                     t.start();
+
                 }
             }
             Instant fin = Instant.now();

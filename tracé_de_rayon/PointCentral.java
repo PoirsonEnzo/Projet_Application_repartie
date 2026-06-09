@@ -7,21 +7,28 @@ import java.util.Set;
 public class PointCentral implements ServiceDistributeurNoeud {
     private List<ServiceNoeud> noeuds = new ArrayList<>();
     private int index = 0;
+    private Set<ServiceNoeud> occupes = new HashSet<>();
 
     
  
     public void inscriptionNoeud(ServiceNoeud noeud) throws RemoteException {
         noeuds.add(noeud);
     }
-    private Set<ServiceNoeud> occupes = new HashSet<>();
 
     public ServiceNoeud getNoeud() throws RemoteException {
-        for (int i = 0; i < noeuds.size(); i++) {
-            ServiceNoeud n = noeuds.get(index);
-            index = (index + 1) % noeuds.size();
-            if (!occupes.contains(n)) {
-                occupes.add(n);
-                return n;
+        if (!noeuds.isEmpty()){
+            // Parcours jusqu'a ce qu'un noeud soit disponible
+            while (true){
+
+                for (int i = 0; i < noeuds.size(); i++) {
+                    // Recherche d'un noeud libre
+                    ServiceNoeud n = noeuds.get(index);
+                    index = (index + 1) % noeuds.size();
+                    if (!occupes.contains(n)) {
+                        occupes.add(n);
+                        return n;
+                    }
+                }
             }
         }
         throw new RemoteException("Aucun noeud disponible");
