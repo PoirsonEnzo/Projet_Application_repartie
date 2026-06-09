@@ -1,9 +1,10 @@
 import java.time.Instant;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.time.Duration;
 
 import raytracer.Disp;
 import raytracer.Scene;
-import raytracer.Image;
 
 public class LancerRaytracer {
 
@@ -16,6 +17,7 @@ public class LancerRaytracer {
 
         // largeur et hauteur par défaut de l'image à reconstruire
         int largeur = 512, hauteur = 512;
+
         
         if(args.length > 0){
             fichier_description = args[0];
@@ -47,21 +49,49 @@ public class LancerRaytracer {
         Instant debut = Instant.now();
         System.out.println("Calcul de l'image :\n - Coordonnées : "+x0+","+y0
                            +"\n - Taille "+ largeur + "x" + hauteur);
+        /* 
         Image image = scene.compute(x0, y0, l/2, h/2);
         Image image2 = scene.compute(x0+l/2, y0+h/2,l-l/2,h-h/2);
         Image image3 = scene.compute(x0+l/2, y0,l-l/2,h);
         Image image4 = scene.compute(x0, y0+h/2,l,h-h/2);
-        Instant fin = Instant.now();
-
-        long duree = Duration.between(debut, fin).toMillis();
         
-        System.out.println("Image calculée en :"+duree+" ms");
-        
-        // Affichage de l'image calculée
-        disp.setImage(image, x0, y0);
-        disp.setImage(image2, x0+l/2,y0+h/2);
-        disp.setImage(image3, x0+l/2,y0);
-        disp.setImage(image4, x0,y0+h/2);
+        */
+       try {
+            Registry annuaire = LocateRegistry.getRegistry(args[0],1099);
+            PointCentral central = (PointCentral) annuaire.lookup("distributeur");
+    // Définition de la grille de découpage (3x3 = 9 blocs)
+            int nbColonnes = 3; 
+            int nbLignes = 3;
+            
+            int largeurBloc = l / nbColonnes;
+            int hauteurBloc = h / nbLignes;
 
-    }	
+            // Double boucle pour parcourir la grille en X et en Y
+            for(int ligne = 0; ligne < nbLignes; ligne++) {
+                for(int colonne = 0; colonne < nbColonnes; colonne++) {
+                    
+                    // Calcul des coordonnées de départ pour le bloc courant
+                    int departX = x0 + (colonne * largeurBloc);
+                    int departY = y0 + (ligne * hauteurBloc);
+                    
+                    // Ajustement pour le dernier bloc de la ligne/colonne au cas où 
+                    // la largeur/hauteur ne serait pas un multiple parfait de 3
+                    int wCourant = (colonne == nbColonnes - 1) ? (l - departX) : largeurBloc;
+                    int hCourant = (ligne == nbLignes - 1) ? (h - departY) : hauteurBloc;
+                    
+                    ServiceNoeud noeud = central.getNoeud();
+                    
+                    // On passe les bonnes coordonnées et tailles au thread
+                    ThreadDessin t = new ThreadDessin(central, disp, noeud, scene, departX, departY, wCourant, hCourant);
+                    t.start();
+                }
+            }
+            Instant fin = Instant.now();
+            long duree = Duration.between(debut, fin).toMillis();
+            
+            System.out.println("Image calculée en :"+duree+" ms");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }	
+    }
 }

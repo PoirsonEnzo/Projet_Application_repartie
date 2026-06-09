@@ -8,13 +8,13 @@ import raytracer.Image;
 public class ThreadDessin extends Thread {
 
     private ServiceDistributeurNoeud service;
-    private NoeudCalcul noeud;
+    private ServiceNoeud noeud;
     private Disp fenetre;
     private Scene scene;
     private int x,y,l,h;
     //Objet de calcul a mettre en attribut
 
-    public ThreadDessin(ServiceDistributeurNoeud serv, Disp f, NoeudCalcul n, Scene s, int x, int y, int l, int h){
+    public ThreadDessin(ServiceDistributeurNoeud serv, Disp f, ServiceNoeud n, Scene s, int x, int y, int l, int h){
         this.noeud = n;
         this.fenetre = f;
         this.scene = s;
