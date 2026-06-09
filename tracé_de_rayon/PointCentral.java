@@ -27,11 +27,11 @@ public class PointCentral implements ServiceDistributeurNoeud {
         throw new RemoteException("Aucun noeud disponible");
     }
 
-    public void libererNoeud(ServiceNoeud noeud) throws RemoteException {
+    public synchronized void libererNoeud(ServiceNoeud noeud) throws RemoteException {
         occupes.remove(noeud);
     }
 
-    public void suppressionNoeud(ServiceNoeud noeud) throws RemoteException {
+    public synchronized void suppressionNoeud(ServiceNoeud noeud) throws RemoteException {
         noeuds.remove(noeud);
         occupes.remove(noeud);
     }

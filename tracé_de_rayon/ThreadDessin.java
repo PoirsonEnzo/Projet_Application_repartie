@@ -31,11 +31,15 @@ public class ThreadDessin extends Thread {
         try {
             image = noeud.compute(scene,x,y,l,h);
         } catch (RemoteException ex) {
-            service.suppressionNoeud(noeud);
+            try {
+                service.suppressionNoeud(noeud);
+            } catch (Exception e){}
         }
         synchronized(fenetre){
             fenetre.setImage(image,x,y);
         }
-        service.libererNoeud(noeud);
+        try {
+            service.libererNoeud(noeud);
+        } catch (Exception e ){}
     }
 }
